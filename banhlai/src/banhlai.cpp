@@ -1,29 +1,77 @@
 #include <Arduino.h>
-
 const int stepPin = 3; //PUL
-const int dirPin = 2; // DIR
-const int enPin = 8; //ena
-void setup() {
-  
-  pinMode(stepPin,OUTPUT); 
-  pinMode(dirPin,OUTPUT);
-  pinMode(enPin,OUTPUT);
-  digitalWrite(enPin,LOW);
-  pinMode(LED_BUILTIN,OUTPUT);
-  
+const int dirPin = 2;  // DIR
+const int enPin = 8;   //ena
+void queo_phai(const int dirr, const int stepPinn);
+void queo_trai(const int dirr, const int stepPinn);
+void setup()
+{
+  pinMode(stepPin, OUTPUT);
+  pinMode(dirPin, OUTPUT);
+  pinMode(enPin, OUTPUT);
+  digitalWrite(enPin, LOW);
+  pinMode(LED_BUILTIN, OUTPUT);
 }
-void loop() {
-  digitalWrite(LED_BUILTIN,HIGH);
-  delay(1000);
-  digitalWrite(LED_BUILTIN,LOW);
-  delay(1000);
-  digitalWrite(dirPin,HIGH); // cho đông cơ quay theo chiều thuận
-  
-  for(int x = 0; x < 200; x++) { // CHẠY 1 VÒNG 200 STEP / 1.8 ĐỘ = 360, S1 S2 ON, S3 OFF
-    digitalWrite(stepPin,HIGH); 
-    delayMicroseconds(500); 
-    digitalWrite(stepPin,LOW); 
-    delayMicroseconds(500); 
+void loop()
+{
+
+  queo_phai(dirPin, stepPin);
+  queo_trai(dirPin, stepPin);
+}
+
+void queo_phai(const int dirPinn, const int stepPinn)
+{
+  digitalWrite(dirPinn, HIGH);
+  for (char i = 0; i < 8; i++)
+  {
+    for (int x = 0; x < 200; x++)
+    {
+      digitalWrite(stepPinn, HIGH);
+      delayMicroseconds(1000);
+      digitalWrite(stepPinn, LOW);
+      delayMicroseconds(1000);
+    }
+    delay(10);
   }
-  delay(2000);
+
+  digitalWrite(dirPinn, LOW);
+  for (char i = 0; i < 8; i++)
+  {
+    for (int x = 0; x < 200; x++)
+    {
+      digitalWrite(stepPinn, HIGH);
+      delayMicroseconds(1000);
+      digitalWrite(stepPinn, LOW);
+      delayMicroseconds(1000);
+    }
+    delay(10);
+  }
+}
+
+void queo_trai(const int dirPinn, const int stepPinn)
+{
+  digitalWrite(dirPinn, LOW);
+  for (char i = 0; i < 8; i++)
+  {
+    for (int x = 0; x < 200; x++)
+    {
+      digitalWrite(stepPinn, HIGH);
+      delayMicroseconds(1000);
+      digitalWrite(stepPinn, LOW);
+      delayMicroseconds(1000);
+    }
+    delay(10);
+  }
+  digitalWrite(dirPinn, HIGH);
+  for (char i = 0; i < 8; i++)
+  {
+    for (int x = 0; x < 200; x++)
+    {
+      digitalWrite(stepPinn, HIGH);
+      delayMicroseconds(1000);
+      digitalWrite(stepPinn, LOW);
+      delayMicroseconds(1000);
+    }
+    delay(10);
+  }
 }
