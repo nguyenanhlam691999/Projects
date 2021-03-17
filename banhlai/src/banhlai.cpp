@@ -16,11 +16,13 @@ char demvongqueo = 0;
 char chieuvongqueo = 0;
 void setup()
 {
+  // can bus
   Serial.begin(9600);
   SPI.begin();
   mcp2515.reset();
   mcp2515.setBitrate(CAN_125KBPS);
   mcp2515.setNormalMode();
+  // control step motor
   pinMode(stepPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
   pinMode(enPin, OUTPUT);
@@ -30,7 +32,7 @@ void setup()
 void loop()
 {
   mcp2515.readMessage(&canMsg);
-
+// queo phai
   while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 1)
   {
     mcp2515.readMessage(&canMsg);
@@ -40,11 +42,10 @@ void loop()
     Serial.println(" queo phai");
     if (demvongqueo == 8 || canMsg.data[0] == 0)
     {
-      Serial.println("out queo phai");
+      Serial.println("ngung tang toc queo phai");
       break;
     }
     demvongqueo++;
-
     delay(100);
   }
   // queo trai
@@ -57,11 +58,10 @@ void loop()
     Serial.println("queo trai");
     if (demvongqueo == 8 || canMsg.data[0] == 0)
     {
-      Serial.println("out queo trai");
+      Serial.println("ngung tang goc queo trai");
       break;
     }
     demvongqueo++;
-
     delay(100);
   }
   // tra lai
@@ -72,10 +72,12 @@ void loop()
     if (chieuvongqueo == 1)
     {
       nalam.tralai_phai(dirPin, stepPin);
+      Serial.println("tra lai phai");
     }
     if (chieuvongqueo == 2)
     {
       nalam.tralai_trai(dirPin, stepPin);
+       Serial.println("tra lai trai");
     }
     if (demvongqueo == 0 || canMsg.data[0] != 0)
     {
@@ -83,7 +85,7 @@ void loop()
       break;
     }
     demvongqueo--;
-    Serial.println("chay thang");
+    
     delay(100);
   }
 }

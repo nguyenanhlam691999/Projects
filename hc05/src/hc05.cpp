@@ -40,16 +40,12 @@ void loop()
 
     if (tinhieudieukhien == 100)
     {
-      digitalWrite(9, HIGH);
-      delay(100);
-      digitalWrite(9, LOW);
       // can bus
       canMsg1.data[0] = 1;
       mcp2515.sendMessage(&canMsg1);
     }
     if (tinhieudieukhien == 200)
     {
-      digitalWrite(9, LOW);
       // can bus
       canMsg1.data[0] = 2;
       mcp2515.sendMessage(&canMsg1);
