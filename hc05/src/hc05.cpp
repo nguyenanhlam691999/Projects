@@ -6,7 +6,7 @@
 struct can_frame canMsg1;
 MCP2515 mcp2515(10);
 
- SoftwareSerial blue(2, 3);
+SoftwareSerial blue(2, 3);
 void setup()
 {
   // can bus
@@ -33,32 +33,36 @@ void setup()
 }
 void loop()
 {
-  int tinhieudieukhien=0;
+  int tinhieudieukhien = 0;
   if (blue.available())
   {
     tinhieudieukhien = blue.read();
-    
+
     if (tinhieudieukhien == 100)
     {
       digitalWrite(9, HIGH);
       delay(100);
+      digitalWrite(9, LOW);
       // can bus
       canMsg1.data[0] = 1;
       mcp2515.sendMessage(&canMsg1);
-      delay(500);
-    
     }
     if (tinhieudieukhien == 200)
     {
       digitalWrite(9, LOW);
       // can bus
-      canMsg1.data[0] = 0;
+      canMsg1.data[0] = 2;
       mcp2515.sendMessage(&canMsg1);
-      delay(500);
-      
-      
     }
   }
-Serial.println(tinhieudieukhien);
+  if (tinhieudieukhien == 0)
+  {
+    canMsg1.data[0] = 0;
+    mcp2515.sendMessage(&canMsg1);
+  }
+  Serial.println("tin hieu can");
+  Serial.println(canMsg1.data[0]);
+  Serial.println("tin hieu bluetooth");
+  Serial.println(tinhieudieukhien);
   delay(100);
 }
