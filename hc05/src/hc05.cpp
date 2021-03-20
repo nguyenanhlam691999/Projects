@@ -38,24 +38,25 @@ void loop()
   {
     tinhieudieukhien = blue.read();
 
-    if (tinhieudieukhien == 100)
+    if (tinhieudieukhien == 103)
     {
       // can bus
-      canMsg1.data[0] = 1;
+      canMsg1.data[0] = 3;
       mcp2515.sendMessage(&canMsg1);
     }
-    if (tinhieudieukhien == 200)
+    if (tinhieudieukhien == 102)
     {
       // can bus
       canMsg1.data[0] = 2;
       mcp2515.sendMessage(&canMsg1);
     }
-  }
-  if (tinhieudieukhien == 0)
+    if (tinhieudieukhien == 104)
   {
-    canMsg1.data[0] = 0;
+    canMsg1.data[0] =4 ;
     mcp2515.sendMessage(&canMsg1);
   }
+  }
+  
   Serial.println("tin hieu can");
   Serial.println(canMsg1.data[0]);
   Serial.println("tin hieu bluetooth");
