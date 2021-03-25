@@ -43,6 +43,7 @@ void loop()
       Serial.println("ngung tang toc queo phai");
       break;
     }
+    
     nalam.queo_phai(dirPin, stepPin);
     demvongqueo++;
     Serial.println("con chay");
