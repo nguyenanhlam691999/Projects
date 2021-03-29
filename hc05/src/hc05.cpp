@@ -42,21 +42,21 @@ void loop()
     {
       // can bus
       // di thang
-      canMsg1.data[0] = 10;
+      canMsg1.data[1] = 10;
       mcp2515.sendMessage(&canMsg1);
     }
     if (tinhieudieukhien == 101)
     {
       // can bus
       // lui
-      canMsg1.data[0] = 1;
+      canMsg1.data[1] = 1;
       mcp2515.sendMessage(&canMsg1);
     }
     if (tinhieudieukhien == 105)
     {
       // can bus
       // phanh
-      canMsg1.data[0] = 5;
+      canMsg1.data[1] = 5;
       mcp2515.sendMessage(&canMsg1);
     }
     if (tinhieudieukhien == 103)
@@ -80,6 +80,6 @@ void loop()
       mcp2515.sendMessage(&canMsg1);
     }
   }
-
+Serial.println(canMsg1.data[1]);
   delay(100);
 }

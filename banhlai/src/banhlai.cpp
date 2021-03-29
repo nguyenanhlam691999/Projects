@@ -28,47 +28,57 @@ void setup()
   pinMode(enPin, OUTPUT);
   digitalWrite(enPin, LOW);
   pinMode(9, OUTPUT);
+  pinMode(LED_BUILTIN,OUTPUT);
 }
 void loop()
 {
   mcp2515.readMessage(&canMsg);
   // queo phai
+
   while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 3)
   {
-
+    mcp2515.readMessage(&canMsg);
     Serial.println(demvongqueo);
     chieuvongqueo = 1;
     if (demvongqueo == 5)
     {
-      Serial.println("ngung tang toc queo phai");
+      
       break;
     }
-    
+     if (canMsg.data[0] == 4)
+    {
+          break;
+    }
+ 
     nalam.queo_phai(dirPin, stepPin);
     demvongqueo++;
-    Serial.println("con chay");
+    Serial.println(" queo phai");
     delay(10);
   }
   // queo trai
   while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 2)
   {
+    mcp2515.readMessage(&canMsg);
     Serial.println(demvongqueo);
     chieuvongqueo = 2;
-
-    Serial.println("queo trai");
+    
     if (demvongqueo == 5)
     {
-      Serial.println("ngung tang goc queo trai");
+
       break;
+    }
+      if (canMsg.data[0] == 4)
+    {
+          break;
     }
     nalam.queo_trai(dirPin, stepPin);
     demvongqueo++;
+    Serial.println("queo trai");
     delay(10);
   }
-  // di thang
+  // tra lai
   while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 4)
   {
-
     if (chieuvongqueo == 1)
     {
       nalam.tralai_phai(dirPin, stepPin);
@@ -85,7 +95,7 @@ void loop()
       break;
     }
     demvongqueo--;
-
+    Serial.println(demvongqueo);
     delay(10);
   }
 }

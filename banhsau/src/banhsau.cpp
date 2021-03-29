@@ -4,12 +4,9 @@
 // can bus
 struct can_frame canMsg;
 MCP2515 mcp2515(10);
-
-
 int counter = 0;
 // int vong = 0;
- void ai0();
-
+void ai0();
 void setup()
 {
   // can bus
@@ -24,34 +21,59 @@ void setup()
   attachInterrupt(0, ai0, FALLING);
   pinMode(5, OUTPUT);
   pinMode(9, OUTPUT);
-  pinMode(4,OUTPUT);
-  digitalWrite(4,HIGH);
-
+  pinMode(4, OUTPUT);
+  digitalWrite(4, HIGH);
 }
 void loop()
 {
+  
 
-  analogWrite(5,100);
-  analogWrite(9,0);
+    
+  mcp2515.readMessage(&canMsg);
+  Serial.println(canMsg.data[0]);
+  while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 10)
+  {
+    mcp2515.readMessage(&canMsg);
+    analogWrite(5, 100);
+    analogWrite(9, 0);
+    Serial.println("chay thang");
+    if (canMsg.data[1] != 10)
+    {
+      break;
+    }
+  }
+  while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 1)
+  {
+    mcp2515.readMessage(&canMsg);
+    analogWrite(9, 100);
+    analogWrite(5, 0);
+    Serial.println("lui");
+    if (canMsg.data[1] != 1)
+    {
+      break;
+    }
+  }
+  while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 5)
+  {
+    mcp2515.readMessage(&canMsg);
+    analogWrite(5, 0);
+    analogWrite(9, 0);
+    Serial.println("phanh");
+    if (canMsg.data[1] != 5)
+    {
+      break;
+    }
+  }
 }
-  
-    
-    
-  
-
 void ai0()
 {
   if (digitalRead(2) == LOW)
   {
     counter++;
-    Serial.println(counter);
-    if (counter>=100)
+    //Serial.println(counter);
+    if (counter >= 100)
     {
-      counter=0;
-      
-
+      counter = 0;
     }
-
   }
-
 }
