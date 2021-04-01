@@ -5,7 +5,6 @@
 #include "mcp2515.h"
 struct can_frame canMsg1;
 MCP2515 mcp2515(10);
-
 SoftwareSerial blue(2, 3);
 void setup()
 {
@@ -37,7 +36,6 @@ void loop()
   if (blue.available())
   {
     tinhieudieukhien = blue.read();
-
     if (tinhieudieukhien == 100)
     {
       // can bus
@@ -80,6 +78,6 @@ void loop()
       mcp2515.sendMessage(&canMsg1);
     }
   }
-Serial.println(canMsg1.data[1]);
+  Serial.println(canMsg1.data[1]);
   delay(100);
 }

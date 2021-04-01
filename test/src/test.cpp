@@ -2,6 +2,11 @@
 #include <PID_v1.h>
 double val_tin_hieu_dieu_khien = 0;
 double val_so_sanh = 0;
+//TEST 
+unsigned int newposition;
+unsigned int oldposition=0;
+unsigned long newtime;
+unsigned long oldtime=0;
 //val couter
 unsigned int val_pulse = 0;
 int val_speed = 0;
@@ -32,7 +37,7 @@ void setup()
 }
 void loop()
 {
-  while (millis() < 500)
+  while (true )
   {
     if (millis() >= 100)
     {

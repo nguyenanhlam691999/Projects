@@ -47,8 +47,6 @@ void setup()
 }
 void loop()
 {
-  // resert millis()
-
   // can bus and control dc motor
   mcp2515.readMessage(&canMsg);
   //Serial.println(canMsg.data[0]);
@@ -60,14 +58,8 @@ void loop()
       break;
     }
     //Serial.println("GO AHEAD");
-    while (millis() <= 500)
+    while (true)
     {
-      mcp2515.readMessage(&canMsg);
-      if (canMsg.data[1] != 10)
-      {
-        break;
-      }
-      Serial.println("GO AHEAD");
       if (millis() >= 100)
       {
         noInterrupts();

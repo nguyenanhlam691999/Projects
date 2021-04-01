@@ -28,7 +28,7 @@ void setup()
   pinMode(enPin, OUTPUT);
   digitalWrite(enPin, LOW);
   pinMode(9, OUTPUT);
-  pinMode(LED_BUILTIN,OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 void loop()
 {
@@ -42,14 +42,12 @@ void loop()
     chieuvongqueo = 1;
     if (demvongqueo == 5)
     {
-      
       break;
     }
-     if (canMsg.data[0] == 4)
+    if (canMsg.data[0] == 4)
     {
-          break;
+      break;
     }
- 
     nalam.queo_phai(dirPin, stepPin);
     demvongqueo++;
     Serial.println(" queo phai");
@@ -61,14 +59,14 @@ void loop()
     mcp2515.readMessage(&canMsg);
     Serial.println(demvongqueo);
     chieuvongqueo = 2;
-        if (demvongqueo == 5)
+    if (demvongqueo == 5)
     {
 
       break;
     }
-      if (canMsg.data[0] == 4)
+    if (canMsg.data[0] == 4)
     {
-          break;
+      break;
     }
     nalam.queo_trai(dirPin, stepPin);
     demvongqueo++;
