@@ -3,15 +3,26 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "mcp2515.h"
+#include <my_lib.h>
+#include "PID_v1.h"
+// val pid
+double val_so_sanh = 0;
+// val pid count
+unsigned int val_pulse = 0;
+int val_speed = 0;
+unsigned int val_old_pulse = 0;
+extern volatile unsigned long timer0_millis;
 // val resert millis
 extern volatile unsigned long timer0_millis;
 // can bus
 struct can_frame canMsg;
 MCP2515 mcp2515(10);
-int val_pulse = 0;
-int val_circle = 0;
-// int vong = 0;
+// void count
 void count_pulse();
+//pid set up
+double Setpoint, Input, Output;
+double Kp = 0.7, Ki = 0.0006, Kd = 20;
+PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 void setup()
 {
   // can bus
@@ -29,11 +40,15 @@ void setup()
   pinMode(9, OUTPUT);
   pinMode(4, OUTPUT);
   digitalWrite(4, HIGH);
+  // pid
+  Setpoint = 100;
+  Input = val_speed;
+  myPID.SetMode(AUTOMATIC);
 }
 void loop()
 {
   // resert millis()
-   if (millis() >= 1000)
+  if (millis() >= 1000)
   {
     noInterrupts();
     timer0_millis = 0;
@@ -47,13 +62,43 @@ void loop()
   Serial.println(canMsg.data[0]);
   while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 10)
   {
-    mcp2515.readMessage(&canMsg);
-    analogWrite(5, 100);
-    analogWrite(9, 0);
+
     Serial.println("GO AHEAD");
-    if (canMsg.data[1] != 10)
+    while (millis() <= 500)
     {
-      break;
+      if (millis() >= 100)
+      {
+        noInterrupts();
+        val_speed = (val_pulse * 60) / (96 * 0.1);
+        timer0_millis = 0;
+        val_pulse = 0;
+        mcp2515.readMessage(&canMsg);
+        if (canMsg.data[1] != 10)
+        {
+          break;
+        }
+        interrupts();
+        attachInterrupt(0, count_pulse, FALLING);
+        break;
+      }
+    }
+    Input = val_speed;
+    myPID.Compute();
+
+    if (Output > 0)
+    {
+      val_so_sanh = Output;
+      analogWrite(5, Output);
+      analogWrite(9, 0);
+    }
+    // analogWrite(5, 100);
+    // analogWrite(9, 0);
+    Serial.print("speed  ");
+    Serial.println(val_speed);
+    if (Output == 0)
+    {
+      analogWrite(5, val_so_sanh);
+      analogWrite(9, 0);
     }
   }
   while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 1)
@@ -84,10 +129,5 @@ void count_pulse()
   if (digitalRead(2) == LOW)
   {
     val_pulse++;
-    if (val_pulse >= 96)
-    {
-      val_pulse = 0;
-      val_circle++;
-    }
   }
 }

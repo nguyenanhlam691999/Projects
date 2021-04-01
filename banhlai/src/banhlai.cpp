@@ -61,8 +61,7 @@ void loop()
     mcp2515.readMessage(&canMsg);
     Serial.println(demvongqueo);
     chieuvongqueo = 2;
-    
-    if (demvongqueo == 5)
+        if (demvongqueo == 5)
     {
 
       break;
@@ -89,7 +88,7 @@ void loop()
       nalam.tralai_trai(dirPin, stepPin);
       Serial.println("tra lai trai");
     }
-    if (demvongqueo == 0)
+    if (demvongqueo < 0)
     {
       chieuvongqueo = 0;
       break;
