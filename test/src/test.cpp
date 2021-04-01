@@ -1,8 +1,7 @@
 #include <Arduino.h>
 #include <PID_v1.h>
-double val_tin_hieu_dieu_khien=0;
-double val_so_sanh=0;
-
+double val_tin_hieu_dieu_khien = 0;
+double val_so_sanh = 0;
 //val couter
 unsigned int val_pulse = 0;
 int val_speed = 0;
@@ -33,7 +32,7 @@ void setup()
 }
 void loop()
 {
-  while (millis() <= 500)
+  while (millis() < 500)
   {
     if (millis() >= 100)
     {
@@ -46,27 +45,26 @@ void loop()
       break;
     }
   }
-  Input = val_speed;
-  myPID.Compute();
+    Input = val_speed;
+    myPID.Compute();
   
-  if (Output > 0)
-  {
-    val_so_sanh=Output;
-    analogWrite(5, Output);
-    analogWrite(9, 0);
-  }
-  // analogWrite(5, 100);
-  // analogWrite(9, 0);
+    if (Output > 0)
+    {
+      val_so_sanh = Output;
+      analogWrite(5, Output);
+      analogWrite(9, 0);
+    }
+    // analogWrite(5, 100);
+    // analogWrite(9, 0);
+
+    if (Output == 0)
+    {
+      analogWrite(5, val_so_sanh);
+      analogWrite(9, 0);
+    }
+  
   Serial.print("speed  ");
   Serial.println(val_speed);
-  
-  if (Output==0)
-  {
-    analogWrite(5, val_so_sanh);
-    analogWrite(9, 0);
-  }
-  
-  
 }
 // program interrupt
 void count_pulse()

@@ -41,42 +41,41 @@ void setup()
   pinMode(4, OUTPUT);
   digitalWrite(4, HIGH);
   // pid
-  Setpoint = 100;
+  Setpoint = 200;
   Input = val_speed;
   myPID.SetMode(AUTOMATIC);
 }
 void loop()
 {
   // resert millis()
-  if (millis() >= 1000)
-  {
-    noInterrupts();
-    timer0_millis = 0;
-    interrupts();
-  }
-  Serial.print("time : ");
-  Serial.println(millis());
-  delay(100);
+
   // can bus and control dc motor
   mcp2515.readMessage(&canMsg);
-  Serial.println(canMsg.data[0]);
+  //Serial.println(canMsg.data[0]);
   while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 10)
   {
-
-    Serial.println("GO AHEAD");
+    mcp2515.readMessage(&canMsg);
+    if (canMsg.data[1] != 10)
+    {
+      break;
+    }
+    //Serial.println("GO AHEAD");
     while (millis() <= 500)
     {
+      mcp2515.readMessage(&canMsg);
+      if (canMsg.data[1] != 10)
+      {
+        break;
+      }
+      Serial.println("GO AHEAD");
       if (millis() >= 100)
       {
         noInterrupts();
         val_speed = (val_pulse * 60) / (96 * 0.1);
         timer0_millis = 0;
         val_pulse = 0;
-        mcp2515.readMessage(&canMsg);
-        if (canMsg.data[1] != 10)
-        {
-          break;
-        }
+        Serial.print("speed  ");
+        Serial.println(val_speed);
         interrupts();
         attachInterrupt(0, count_pulse, FALLING);
         break;
@@ -84,17 +83,12 @@ void loop()
     }
     Input = val_speed;
     myPID.Compute();
-
     if (Output > 0)
     {
       val_so_sanh = Output;
       analogWrite(5, Output);
       analogWrite(9, 0);
     }
-    // analogWrite(5, 100);
-    // analogWrite(9, 0);
-    Serial.print("speed  ");
-    Serial.println(val_speed);
     if (Output == 0)
     {
       analogWrite(5, val_so_sanh);
