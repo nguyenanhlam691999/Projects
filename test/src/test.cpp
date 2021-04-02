@@ -52,8 +52,7 @@ void loop()
   }
     Input = val_speed;
     myPID.Compute();
-  
-    if (Output > 0)
+      if (Output > 0)
     {
       val_so_sanh = Output;
       analogWrite(5, Output);

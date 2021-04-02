@@ -63,7 +63,7 @@ void loop()
       if (millis() >= 100)
       {
         noInterrupts();
-        val_speed = (val_pulse * 60) / (96 * 0.1);
+        val_speed = (val_pulse * 60) / (96 * millis());
         timer0_millis = 0;
         val_pulse = 0;
         Serial.print("speed  ");
