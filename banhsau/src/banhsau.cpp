@@ -5,6 +5,8 @@
 #include "mcp2515.h"
 #include <my_lib.h>
 #include "PID_v1.h"
+// resert time
+void reset_time();
 // val pid
 double val_so_sanh = 0;
 // val pid count
@@ -34,7 +36,7 @@ void setup()
   //encoder
   pinMode(2, INPUT_PULLUP); // pin 2
   pinMode(3, INPUT_PULLUP);
-  attachInterrupt(0, count_pulse, FALLING);
+
   // dc motor
   pinMode(5, OUTPUT);
   pinMode(9, OUTPUT);
@@ -52,6 +54,7 @@ void loop()
   //Serial.println(canMsg.data[0]);
   while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 10)
   {
+    attachInterrupt(0, count_pulse, FALLING);
     mcp2515.readMessage(&canMsg);
     if (canMsg.data[1] != 10)
     {
@@ -62,12 +65,14 @@ void loop()
     {
       if (millis() >= 100)
       {
+        Serial.print("itme  ");
+        Serial.println(millis());
         noInterrupts();
-        val_speed = (val_pulse * 60) / (96 * millis());
+        val_speed = (val_pulse * 60) / (96 * 0.1);
         timer0_millis = 0;
         val_pulse = 0;
-        Serial.print("speed  ");
-        Serial.println(val_speed);
+        //Serial.print("speed  ");
+        //Serial.println(val_speed);
         interrupts();
         attachInterrupt(0, count_pulse, FALLING);
         break;
@@ -109,6 +114,7 @@ void loop()
       break;
     }
   }
+ reset_time();
 }
 void count_pulse()
 {
@@ -116,4 +122,10 @@ void count_pulse()
   {
     val_pulse++;
   }
+}
+void reset_time()
+{
+  noInterrupts();
+  timer0_millis = 0;
+  interrupts();
 }
