@@ -2,6 +2,8 @@
 #include <my_lib.h>
 #include <SPI.h>
 #include "mcp2515.h"
+// prevent fail turn
+char val_turn=0;
 // can bus
 struct can_frame canMsg;
 MCP2515 mcp2515(10);
@@ -35,11 +37,12 @@ void loop()
   mcp2515.readMessage(&canMsg);
   // queo phai
   Serial.println(canMsg.can_id);
-  while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 3)
+  while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 3 && val_turn==0)
   {
     mcp2515.readMessage(&canMsg);
     Serial.println(demvongqueo);
     chieuvongqueo = 1;
+    val_turn=1;
     if (demvongqueo == 6)
     {
       break;
@@ -54,14 +57,14 @@ void loop()
     delay(10);
   }
   // queo trai
-  while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 2)
+  while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 2 && val_turn==0)
   {
     mcp2515.readMessage(&canMsg);
     Serial.println(demvongqueo);
     chieuvongqueo = 2;
+    val_turn=1;
     if (demvongqueo == 6)
     {
-
       break;
     }
     if (canMsg.data[0] == 4)
@@ -74,8 +77,9 @@ void loop()
     delay(10);
   }
   // tra lai
-  while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 4)
+  while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 4 && val_turn==1)
   {
+    val_turn=0;
     if (chieuvongqueo == 1)
     {
       nalam.tralai_phai(dirPin, stepPin);
