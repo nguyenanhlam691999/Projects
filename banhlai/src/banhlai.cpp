@@ -34,13 +34,13 @@ void loop()
 {
   mcp2515.readMessage(&canMsg);
   // queo phai
-
+  Serial.println(canMsg.can_id);
   while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 3)
   {
     mcp2515.readMessage(&canMsg);
     Serial.println(demvongqueo);
     chieuvongqueo = 1;
-    if (demvongqueo == 5)
+    if (demvongqueo == 6)
     {
       break;
     }
@@ -59,7 +59,7 @@ void loop()
     mcp2515.readMessage(&canMsg);
     Serial.println(demvongqueo);
     chieuvongqueo = 2;
-    if (demvongqueo == 5)
+    if (demvongqueo == 6)
     {
 
       break;
@@ -86,7 +86,7 @@ void loop()
       nalam.tralai_trai(dirPin, stepPin);
       Serial.println("tra lai trai");
     }
-    if (demvongqueo < 0)
+    if (demvongqueo == 0)
     {
       chieuvongqueo = 0;
       break;

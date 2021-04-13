@@ -32,9 +32,11 @@ void setup()
 }
 void loop()
 {
+  
   int tinhieudieukhien = 0;
   if (blue.available())
   {
+    Serial.println("connect");
     tinhieudieukhien = blue.read();
     if (tinhieudieukhien == 100)
     {
@@ -78,6 +80,7 @@ void loop()
       mcp2515.sendMessage(&canMsg1);
     }
   }
-  Serial.println(canMsg1.data[1]);
-  delay(100);
+  
+  
+
 }

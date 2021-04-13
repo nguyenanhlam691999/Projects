@@ -5,8 +5,6 @@
 #include "mcp2515.h"
 #include <my_lib.h>
 #include "PID_v1.h"
-// val speed
-
 // resert time
 void reset_time();
 // val pid
@@ -19,8 +17,7 @@ extern volatile unsigned long timer0_millis;
 // val resert millis
 extern volatile unsigned long timer0_millis;
 // can bus
-struct can_frame canMsg,canMsg_send;
-
+struct can_frame canMsg;
 MCP2515 mcp2515(10);
 // void count
 void count_pulse();
@@ -49,17 +46,6 @@ void setup()
   Setpoint = 200;
   Input = val_speed;
   myPID.SetMode(AUTOMATIC);
-  // can send speed
-  canMsg_send.can_id = 0x0F6;
-  canMsg_send.can_dlc = 8;
-  canMsg_send.data[0] = 0;
-  canMsg_send.data[1] = 0;
-  canMsg_send.data[2] = 0;
-  canMsg_send.data[3] = 0;
-  canMsg_send.data[4] = 0;
-  canMsg_send.data[5] = 0;
-  canMsg_send.data[6] = 0;
-  canMsg_send.data[7] = 0;
 }
 void loop()
 {
@@ -83,7 +69,6 @@ void loop()
         //Serial.println(millis());
         noInterrupts();
         val_speed = (val_pulse * 60) / (96 * 0.1);
-        
         timer0_millis = 0;
         val_pulse = 0;
         Serial.print("speed  ");
