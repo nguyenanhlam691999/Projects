@@ -3,7 +3,7 @@
 #include <SPI.h>
 #include "mcp2515.h"
 // prevent fail turn
-char val_turn = 0;
+
 // can bus
 struct can_frame canMsg;
 MCP2515 mcp2515(10);
@@ -14,8 +14,8 @@ const int enPin = 8;   //ena
 // my_lib
 car nalam;
 // dem vong queo
-int demvongqueo = 0;
-int chieuvongqueo = 0;
+unsigned int demvongqueo = 0;
+ int chieuvongqueo = 0;
 void setup()
 {
   // can bus
@@ -35,68 +35,80 @@ void setup()
 void loop()
 {
   mcp2515.readMessage(&canMsg);
-  // queo phai
-  Serial.println(canMsg.can_id);
-  while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 3 && val_turn == 0)
+  ////////////////////////////////////// queo phai//////////////////////////////////
+  
+  if (canMsg.can_id == 0x0F6)
   {
-    mcp2515.readMessage(&canMsg);
-    Serial.println(demvongqueo);
-    chieuvongqueo = 1;
-    val_turn = 1;
-    if (demvongqueo == 6)
+    while ( canMsg.data[0] == 3)
     {
-      break;
+      mcp2515.readMessage(&canMsg);
+      Serial.println(demvongqueo);
+      chieuvongqueo = 1;
+      
+       if (canMsg.data[0] == 10)
+      {
+        break;
+       }
+      if (demvongqueo == 6)
+      {
+        break;
+      }
+      // if (canMsg.data[0] == 4)
+      // {
+      //   break;
+      // }
+      nalam.queo_phai(dirPin, stepPin);
+      demvongqueo++;
+      Serial.println(" queo phai");
+      delay(50);
     }
-    if (canMsg.data[0] == 4)
+    ////////////////////////////////////// queo trai//////////////////////////////////////////////////
+    while ( canMsg.data[0] == 2)
     {
-      break;
+     
+      mcp2515.readMessage(&canMsg);
+      Serial.println(demvongqueo);
+      chieuvongqueo = 2;
+      if (canMsg.data[0] == 10)
+      {
+        break;
+      }
+      if (demvongqueo == 6)
+      {
+        break;
+      }
+      // if (canMsg.data[0] == 4)
+      // {
+      //   break;
+      // }
+      nalam.queo_trai(dirPin, stepPin);
+      demvongqueo++;
+      Serial.println("queo trai");
+      delay(50);
     }
-    nalam.queo_phai(dirPin, stepPin);
-    demvongqueo++;
-    Serial.println(" queo phai");
-    //delay(10);
-  }
-  // queo trai
-  while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 2 && val_turn == 0)
-  {
-    mcp2515.readMessage(&canMsg);
-    Serial.println(demvongqueo);
-    chieuvongqueo = 2;
-    val_turn = 1;
-    if (demvongqueo == 6)
+    //////////////////////////////////////////////////// tra lai/////////////////////////////////////////////////////
+    while ( canMsg.data[0] == 4)
     {
-      break;
+      
+      if (chieuvongqueo == 1)
+      {
+        nalam.tralai_phai(dirPin, stepPin);
+        Serial.println("tra lai phai");
+      }
+      if (chieuvongqueo == 2)
+      {
+        nalam.tralai_trai(dirPin, stepPin);
+        Serial.println("tra lai trai");
+      }
+      if (demvongqueo <= 1)
+      {
+        chieuvongqueo = 0;
+        demvongqueo=0;
+        break;
+      }
+      demvongqueo--;
+      Serial.println(demvongqueo);
+      delay(50);
     }
-    if (canMsg.data[0] == 4)
-    {
-      break;
-    }
-    nalam.queo_trai(dirPin, stepPin);
-    demvongqueo++;
-    Serial.println("queo trai");
-    //delay(10);
-  }
-  // tra lai
-  while ((canMsg.can_id == 0x0F6) && canMsg.data[0] == 4 && val_turn == 1)
-  {
-    val_turn = 0;
-    if (chieuvongqueo == 1)
-    {
-      nalam.tralai_phai(dirPin, stepPin);
-      Serial.println("tra lai phai");
-    }
-    if (chieuvongqueo == 2)
-    {
-      nalam.tralai_trai(dirPin, stepPin);
-      Serial.println("tra lai trai");
-    }
-    if (demvongqueo == 0)
-    {
-      chieuvongqueo = 0;
-      break;
-    }
-    demvongqueo--;
-    Serial.println(demvongqueo);
-    //delay(10);
   }
 }

@@ -50,7 +50,7 @@ void setup()
   Input = val_speed;
   myPID.SetMode(AUTOMATIC);
   // can send speed
-  canMsg_send.can_id = 0x0F6;
+  canMsg_send.can_id = 0x0F7;
   canMsg_send.can_dlc = 8;
   canMsg_send.data[0] = 0;
   canMsg_send.data[1] = 0;
@@ -83,7 +83,6 @@ void loop()
         //Serial.println(millis());
         noInterrupts();
         val_speed = (val_pulse * 60) / (96 * 0.1);
-        
         timer0_millis = 0;
         val_pulse = 0;
         Serial.print("speed  ");
@@ -106,6 +105,9 @@ void loop()
       analogWrite(5, val_so_sanh);
       analogWrite(6, 0);
     }
+    
+    
+
   }
   while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 1)
   {

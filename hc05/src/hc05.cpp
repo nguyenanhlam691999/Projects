@@ -16,7 +16,7 @@ void setup()
   mcp2515.reset();
   mcp2515.setBitrate(CAN_125KBPS);
   mcp2515.setNormalMode();
-  canMsg1.can_id = 0x0F6;
+   canMsg1.can_id = 0x0F6;
   canMsg1.can_dlc = 8;
   canMsg1.data[0] = 0;
   canMsg1.data[1] = 0;
@@ -32,12 +32,12 @@ void setup()
 }
 void loop()
 {
-  
   int tinhieudieukhien = 0;
   if (blue.available())
   {
     Serial.println("connect");
     tinhieudieukhien = blue.read();
+    /////////////////////////////////////////canMsg.data[1]//////////////////////////////////////////////////
     if (tinhieudieukhien == 100)
     {
       // can bus
@@ -59,6 +59,14 @@ void loop()
       canMsg1.data[1] = 5;
       mcp2515.sendMessage(&canMsg1);
     }
+    ///////////////////////////////////canMsg.data[0]/////////////////////////////////////////////////////////////
+    if (tinhieudieukhien == 110)
+    {
+      // ngung danh lai
+      canMsg1.data[0] = 10;
+      mcp2515.sendMessage(&canMsg1);
+    }
+        
     if (tinhieudieukhien == 103)
     {
       // can bus
@@ -79,8 +87,7 @@ void loop()
       canMsg1.data[0] = 4;
       mcp2515.sendMessage(&canMsg1);
     }
+    Serial.println(tinhieudieukhien);
+    delay(10);
   }
-  
-  
-
 }
