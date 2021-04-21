@@ -19,14 +19,14 @@ extern volatile unsigned long timer0_millis;
 // val resert millis
 extern volatile unsigned long timer0_millis;
 // can bus
-struct can_frame canMsg,canMsg_send;
+struct can_frame canMsg;
 
 MCP2515 mcp2515(10);
 // void count
 void count_pulse();
 //pid set up
 double Setpoint, Input, Output;
-double Kp = 0.7, Ki = 0.0006, Kd = 20;
+double Kp = 1.1, Ki = 0., Kd = 0;
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 void setup()
 {
@@ -50,22 +50,14 @@ void setup()
   Input = val_speed;
   myPID.SetMode(AUTOMATIC);
   // can send speed
-  canMsg_send.can_id = 0x0F7;
-  canMsg_send.can_dlc = 8;
-  canMsg_send.data[0] = 0;
-  canMsg_send.data[1] = 0;
-  canMsg_send.data[2] = 0;
-  canMsg_send.data[3] = 0;
-  canMsg_send.data[4] = 0;
-  canMsg_send.data[5] = 0;
-  canMsg_send.data[6] = 0;
-  canMsg_send.data[7] = 0;
+ 
 }
 void loop()
 {
   // can bus and control dc motor
   mcp2515.readMessage(&canMsg);
   //Serial.println(canMsg.data[0]);
+  /////////////////////////////go_ahead/////////////////////////////
   while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 10)
   {
     attachInterrupt(0, count_pulse, FALLING);
@@ -74,13 +66,10 @@ void loop()
     {
       break;
     }
-    //Serial.println("GO AHEAD");
     while (true)
     {
       if (millis() >= 100)
       {
-        //Serial.print("itme  ");
-        //Serial.println(millis());
         noInterrupts();
         val_speed = (val_pulse * 60) / (96 * 0.1);
         timer0_millis = 0;
@@ -105,10 +94,10 @@ void loop()
       analogWrite(5, val_so_sanh);
       analogWrite(6, 0);
     }
-    
-    
-
+    /////////////////////////////send_speed_hc05/////////////////////////////
+ 
   }
+  /////////////////////////////reverse/////////////////////////////
   while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 1)
   {
     mcp2515.readMessage(&canMsg);
@@ -120,6 +109,7 @@ void loop()
       break;
     }
   }
+  /////////////////////////////break/////////////////////////////
   while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 5)
   {
     mcp2515.readMessage(&canMsg);
@@ -131,7 +121,8 @@ void loop()
       break;
     }
   }
- reset_time();
+  /////////////////////////////function/////////////////////////////
+  reset_time();
 }
 void count_pulse()
 {

@@ -24,7 +24,7 @@ MCP2515 mcp2515(10);
 void count_pulse();
 //pid set up
 double Setpoint, Input, Output;
-double Kp = 0.7, Ki = 0.0006, Kd = 20;
+double Kp = 1, Ki = 0, Kd = 0;
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 void setup()
 {
@@ -44,12 +44,14 @@ void setup()
   pinMode(4, OUTPUT);
   digitalWrite(4, HIGH);
   // pid
-  Setpoint = 200;
+  Setpoint = 100;
   Input = val_speed;
   myPID.SetMode(AUTOMATIC);
 }
 void loop()
 {
+  analogWrite(6, 100);
+    analogWrite(5, 0);
   // can bus and control dc motor
   mcp2515.readMessage(&canMsg);
   //Serial.println(canMsg.data[0]);
