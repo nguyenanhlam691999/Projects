@@ -56,7 +56,7 @@ void loop()
 {
   // can bus and control dc motor
   mcp2515.readMessage(&canMsg);
-  //Serial.println(canMsg.data[0]);
+  Serial.println(canMsg.can_id);
   /////////////////////////////go_ahead/////////////////////////////
   while ((canMsg.can_id == 0x0F6) && canMsg.data[1] == 10)
   {

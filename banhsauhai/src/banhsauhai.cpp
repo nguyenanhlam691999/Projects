@@ -28,6 +28,7 @@ double Kp = 1, Ki = 0, Kd = 0;
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 void setup()
 {
+  
   // can bus
   Serial.begin(9600);
   SPI.begin();
